@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Some</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+	<div id="app">
+		<div>
+			<form >
+				<input v-model="cond" type="checkbox"  name="cond" value="M">M
+				<input v-model="cond" type="checkbox"  name="cond" value="NM">NM
+				<input v-model="cond" type="checkbox"  name="cond" value="SP">SP
+				<input v-model="cond" type="checkbox"  name="cond"  value="HP">HP
+			</form>
+      <form>
+        <input type="radio" value="F" name="foil" v-model="foil">foil
+        <input type="radio" value="N" name="foil" v-model="foil">Nonfoil
+        <input type="radio" value="D" name="foil" v-model="foil">сбросить
+      </form>
+      <form>
+        <input type="radio" value="price(dec)" name="sort" v-model="sort">price(dec)
+        <input type="radio" value="price(inc)" name="sort" v-model="sort">price(inc)
+        <input type="radio" value="alph" name="sort" v-model="sort">по алфавиту
+        <input type="radio" value="def" name="sort" v-model="sort">сбросить
+      </form>
+		</div>
+		<table>
+			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
+			<tr v-for="card in sorted_cards" v-if="filt(card)"><td>[[card.name]]</td><td>[[card.price]]</td><td>[[card.my_price]]</td><td>[[card.condition]]</td></tr>
+		</table>
+	</div>
+<script>
+let app = new Vue({
+  el: '#app',
+  delimiters: ['[[', ']]'],
+  data: {
+    cards:[],
+    cond:[],
+    sort:"def",
+    foil:"D",
+  		},
+  methods:{
+  	loadCards:function(){
+  		let xhttp = new XMLHttpRequest();
+  		xhttp.onreadystatechange = function(){
+  			if(this.readyState == 4 && this.status==200){
+  			for(i of JSON.parse(this.responseText)){
+  				app.cards.push(i);
+  			}}
+  		}
+  		xhttp.open("GET", `${document.location.pathname.split("/")[2]}/cards`, true);
+  		xhttp.send();},
+
+      filt:function(card){
+        condition = app.cond.length==0|app.cond.findIndex((i)=>i==card.condition)!=-1;
+        foil = card.foil&app.foil=="F"|(!card.foil)&app.foil=="N"|app.foil=="D";
+        return condition&foil;
+      }
+  	},
+  computed:{
+    sorted_cards:function(){
+      sorted = this.cards.slice(0)
+      if(this.sort=="price(inc)"){
+        sorted.sort(function(a,b){return a.price-b.price})
+      }else if(this.sort=="price(dec)"){
+        sorted.sort(function(a,b){return b.price-a.price})
+      }else if(this.sort=="alph"){
+        sorted.sort(function(a,b){if(b.name>a.name){return -1}else{return +1}})
+      }
+      return sorted
+    }
+  }
+  })
+	app.loadCards()	
+	
+</script>
+</body>
+</html>

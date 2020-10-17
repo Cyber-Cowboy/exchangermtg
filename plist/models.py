@@ -14,7 +14,7 @@ class Card(models.Model):
 	mset = models.CharField(max_length=5)
 	foil = models.BooleanField(default=False)
 	alt_art = models.BooleanField(default=False)
-	my_price = models.IntegerField()
+	my_price = models.FloatField()
 	card_list = models.ForeignKey(CardList, on_delete=models.CASCADE)
 	condition = models.CharField(max_length=2, choices=[("M","M"),
 												("NM","NM"),
@@ -25,6 +25,6 @@ class Card(models.Model):
 		return self.name
 	
 	def get_market_price(self):
-		response = requests.get("https://api.scryfall.com/cards/named?exact=%s")%self.name
-		return json.loads(response)["prices"]["usd"]
+		response = requests.get("https://api.scryfall.com/cards/named?exact=%s"%self.name)
+		return json.loads(response.content)["prices"]["usd"]
 
