@@ -1,13 +1,16 @@
 import json
 import requests
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 class CardList(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+	name = models.CharField(max_length=15, blank=True)
 	def __str__(self):
 		return "%s's cardlist" % self.user.username
+	def get_absolute_url(self):
+		return reverse("plist:card_list", args=[self.pk])
 
 class Card(models.Model):
 	name = models.CharField(max_length=100)

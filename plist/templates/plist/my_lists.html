@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>my lists</title>
+</head>
+<body>
+{%for list in lists%}
+<ul>
+	<li><a href="{{list.get_absolute_url}}">{{list.name}}</a></li>
+</ul>
+{%endfor%}
+</body>
+</html>
