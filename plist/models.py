@@ -8,7 +8,7 @@ class CardList(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=15, blank=True)
 	def __str__(self):
-		return "%s's cardlist" % self.user.username
+		return self.name
 	def get_absolute_url(self):
 		return reverse("plist:card_list", args=[self.pk])
 

@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import CardList, Card
+from .forms import CardForm
 
 def card_list(request, pk):
 	return render(request, 
@@ -29,6 +30,16 @@ def create_card_list(request):
 		return HttpResponseRedirect(reverse("plist:card_list", args=[cardlist.pk,]))
 	else:
 		return render(request, "plist/create_list.html", {})
+
+def create_card(request):
+	if request.method=="POST":
+		form = CardForm(request.POST)
+		if form.is_valid:
+			form.save()
+			return HttpResponseRedirect("/")
+	else:
+		options = CardList.objects.filter(user=request.user)
+	return render(request, "plist/create_card.html", {"options":options})
 
 @login_required(redirect_field_name='my_redirect_field')
 def my_lists(request):
