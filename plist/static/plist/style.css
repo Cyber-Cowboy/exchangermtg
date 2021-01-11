@@ -1,0 +1,46 @@
+*{
+	box-sizing: border-box;
+}
+.navigator {
+	height: 30px;
+	display: flex;
+	justify-content: space-around;
+}
+.navigator a{
+	display: block;
+	text-decoration:none;
+	color: black;
+}
+.pannel{
+	padding: 5px;
+	border-width: 2px;
+	border-color: black;
+	border-style: solid;
+	width: 100%;
+	text-align: center;
+}
+.filters{
+	display: flex;
+	justify-content: space-around;
+	border-width: 2px;
+	border-color: black;
+	border-style: solid;
+	margin: 30px;
+	text-align: center;
+
+}
+.filter{
+	border-width: 2px;
+	border-color: black;
+	border-style: solid;
+	margin: 30px;
+	text-align: center;
+}
+.list{
+
+	border-width: 2px;
+	border-color: black;
+	border-style: solid;
+	width: 100%;
+	text-align: center;
+}

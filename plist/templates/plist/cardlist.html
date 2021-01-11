@@ -1,33 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Some</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-</head>
-<body>
+{%extends "base.html"%}
+{% block title %}{{card_list.name}}{% endblock %}
+{%block content%}
 	<div id="app">
-		<div>
+		<div class="filters">
+      <div class="filter">
+        <p>Состояние</p>
 			<form >
 				<input v-model="cond" type="checkbox"  name="cond" value="M">M
 				<input v-model="cond" type="checkbox"  name="cond" value="NM">NM
 				<input v-model="cond" type="checkbox"  name="cond" value="SP">SP
 				<input v-model="cond" type="checkbox"  name="cond"  value="HP">HP
 			</form>
+      </div>
+      <div class="filter">
+      <p>Фойла</p>
       <form>
-        <input type="radio" value="F" name="foil" v-model="foil">foil
-        <input type="radio" value="N" name="foil" v-model="foil">Nonfoil
-        <input type="radio" value="D" name="foil" v-model="foil">сбросить
+        <input type="radio" value="F" name="foil" v-model="foil">Только фоил
+        <input type="radio" value="N" name="foil" v-model="foil">Только не фоил
+        <input type="radio" value="D" name="foil" v-model="foil">Без разницы
       </form>
+      </div>
+      <div class="filter">
+        <p>Сортировка</p>
       <form>
-        <input type="radio" value="price(dec)" name="sort" v-model="sort">price(dec)
-        <input type="radio" value="price(inc)" name="sort" v-model="sort">price(inc)
+        <input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)
+        <input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)
         <input type="radio" value="alph" name="sort" v-model="sort">по алфавиту
         <input type="radio" value="def" name="sort" v-model="sort">сбросить
       </form>
+    </div>
 		</div>
-		<table>
+		<table class="list">
 			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
-			<tr v-for="card in sorted_cards" v-if="filt(card)"><td>[[card.name]]</td><td>[[card.price]]</td><td>[[card.my_price]]</td><td>[[card.condition]]</td></tr>
+			<tr v-for="card in sorted_cards" v-if="filt(card)"><td>[[card.name]]</td><td>[[card.price]]$</td><td>[[card.my_price]]$</td><td>[[card.condition]]</td></tr>
 		</table>
 	</div>
 <script>
@@ -75,5 +80,4 @@ let app = new Vue({
 	app.loadCards()	
 	
 </script>
-</body>
-</html>
+{%endblock%}

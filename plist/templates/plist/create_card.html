@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>card</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Добавить карту{% endblock %}
+{%block content%}
+
+
 	<form method="POST">
 		{%csrf_token%}
 		<tr><th><label for="id_name">Название:</label></th><td><input type="text" name="name" maxlength="100" required id="id_name"></td></tr>
@@ -19,3 +18,4 @@
 	</form>
 </body>
 </html>
+{%endblock%}

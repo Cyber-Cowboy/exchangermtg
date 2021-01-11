@@ -1,14 +1,18 @@
 import json
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import CardList, Card
 from .forms import CardForm
 
+def index(request):
+	return render(request,
+		"plist/index.html",{})
 def card_list(request, pk):
+	card_list = get_object_or_404(CardList,pk=pk)
 	return render(request, 
-		"plist/cardlist.html", {})
+		"plist/cardlist.html", {"card_list":card_list})
 
 def get_cards(request, pk):
 	card_list = CardList.objects.get(pk=pk)
