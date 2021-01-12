@@ -7,8 +7,9 @@ from .models import CardList, Card
 from .forms import CardForm
 
 def index(request):
+	cardlist = CardList.objects.all()
 	return render(request,
-		"plist/index.html",{})
+		"plist/index.html",{"cardlists":cardlist})
 def card_list(request, pk):
 	card_list = get_object_or_404(CardList,pk=pk)
 	return render(request, 

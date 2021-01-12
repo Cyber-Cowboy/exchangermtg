@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 class CardList(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=15, blank=True)
+	created_at = created_at = models.DateTimeField(auto_now_add=True)
+	class Meta:
+		ordering =('-created_at',)
 	def __str__(self):
 		return self.name
 	def get_absolute_url(self):
