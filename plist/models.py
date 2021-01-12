@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 class CardList(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, related_name="cardlists", on_delete=models.CASCADE)
 	name = models.CharField(max_length=15, blank=True)
 	created_at = created_at = models.DateTimeField(auto_now_add=True)
 	class Meta:
