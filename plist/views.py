@@ -26,7 +26,8 @@ def get_cards(request, pk):
 	"condition":card.condition,
 	"display":True,
 	"foil":card.foil,
-	"price":card.get_market_price()}
+	"price":card.get_market_price(),
+	"id":card.id}
 	for card in Card.objects.filter(card_list=card_list)]
 	return HttpResponse(json.dumps(cards))
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, api
 
 app_name = "plist"
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
 	path("exchanger/create_card", views.create_card, name="create_card"),
 	path("exchanger/my", views.my_lists, name="my_lists"),
 	path("edit_cardlist/", views.create_card, name="edit_cardlist"),
+	path("delete_card/", api.delete_card, name="delete_card"),
 	path("", views.index, name="index")
 ] 
