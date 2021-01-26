@@ -34,6 +34,7 @@
 			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
 			<tr v-for="card in sorted_cards" v-if="filt(card)"><td>[[card.name]]</td><td>[[card.price]]$</td><td>[[card.my_price]]$</td><td>[[card.condition]]</td></tr>
 		</table>
+    <a href="{% url 'plist:edit_cardlist' %}"><button>Добавить новые карты</button>
 	</div>
 <script>
 let app = new Vue({

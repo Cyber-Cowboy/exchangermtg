@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}{{user.username}}{% endblock %}
+{% block content %}
+<p>Обменники пользователя <strong>{{user.username}}</strong></p>
+{%for cardlist in user.cardlists.all%}
+<div><a href="{%url 'plist:card_list' cardlist.id %}">{{cardlist.name}} by {{cardlist.user.username}}</a></div>
+{%endfor%}
+
+{% endblock %}

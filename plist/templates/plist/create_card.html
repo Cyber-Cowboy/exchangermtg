@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 {% block title %}Добавить карту{% endblock %}
 {%block content%}
-
-
-	<form method="POST">
+<form method="POST">
 		{%csrf_token%}
-		<tr><th><label for="id_name">Название:</label></th><td><input type="text" name="name" maxlength="100" required id="id_name"></td></tr>
-<tr><th><label for="id_foil">Foil:</label></th><td><input type="checkbox" name="foil" id="id_foil"></td></tr>
-<tr><th><label for="id_alt_art">Alt art:</label></th><td><input type="checkbox" name="alt_art" id="id_alt_art"></td></tr>
-<tr><th><label for="id_card_list">Список:</label></th><td><select name="card_list" required id="id_card_list">
-  <option value="" selected>---------</option>
-{%for option in options%}
-  <option value="{{option.id}}">{{option}}</option>
-{%endfor%}
-</select></td></tr>
-		<input type="submit">
+		<tr>
+			<th><label for="id_name">Название:</label></th>
+			<td><input type="text" name="name" maxlength="100" required id="id_name"></td>
+		</tr>
+		<tr>
+			<th><label for="id_foil">Foil:</label></th>
+			<td><input type="checkbox" name="foil" id="id_foil"></td>
+		</tr>
+		<tr>
+			<th><label for="id_alt_art">Alt art:</label></th>
+			<td><input type="checkbox" name="alt_art" id="id_alt_art"></td>
+		</tr>
+		<tr><th><label for="id_card_list">Список:</label></th>
+			<td><select name="card_list" required id="id_card_list">
+  			<option value="" selected>---------</option>
+				{%for option in options%}
+  					<option value="{{option.id}}">{{option}}</option>
+				{%endfor%}</select></td>
+			</tr>
+		<input type="submit" value="Добавить карту">
+		{%for error in errors%}
+			<p>{{error}}</p>
+		{%endfor%}
 	</form>
 </body>
 </html>

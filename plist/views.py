@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from .models import CardList, Card
 from .forms import CardForm
 
+import json
+import requests
+
 def index(request):
 	cardlist = CardList.objects.all()
 	return render(request,
@@ -37,14 +40,20 @@ def create_card_list(request):
 		return render(request, "plist/create_list.html", {})
 
 def create_card(request):
+	errors = []
+	options = CardList.objects.filter(user=request.user)
 	if request.method=="POST":
 		form = CardForm(request.POST)
+		response = requests.get("https://api.scryfall.com/cards/named?exact=%s"%request.POST["name"])
+		if json.loads(response.content)["object"]=="error":
+			errors.append("This card does not exist!")
+			return render(request, "plist/create_card.html", {"options":options,
+														"errors":errors})
 		if form.is_valid:
 			form.save()
 			return HttpResponseRedirect("/")
-	else:
-		options = CardList.objects.filter(user=request.user)
-	return render(request, "plist/create_card.html", {"options":options})
+	return render(request, "plist/create_card.html", {"options":options,
+														"errors":errors})
 
 @login_required(redirect_field_name='my_redirect_field')
 def my_lists(request):
