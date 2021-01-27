@@ -37,10 +37,13 @@
 	text-align: center;
 }
 .list{
-
+	margin: 5%;
 	border-width: 2px;
 	border-color: black;
 	border-style: solid;
-	width: 100%;
+	width: 90%;
+	text-align: center;
+}
+.list a{
 	text-align: center;
 }

@@ -11,5 +11,6 @@ urlpatterns = [
 	path("edit_cardlist/", views.create_card, name="edit_cardlist"),
 	path("delete_card/", api.delete_card, name="delete_card"),
 	path("change_my_price/", api.change_my_price, name="change_my_price"),
+	path("add_new_card/", api.add_new_card, name="add_new_card"),
 	path("", views.index, name="index")
 ] 
