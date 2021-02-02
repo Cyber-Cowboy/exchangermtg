@@ -6,27 +6,27 @@
       <div class="filter">
         <p>Состояние</p>
 			<form >
-				<input v-model="cond" type="checkbox"  name="cond" value="M">M
-				<input v-model="cond" type="checkbox"  name="cond" value="NM">NM
-				<input v-model="cond" type="checkbox"  name="cond" value="SP">SP
-				<input v-model="cond" type="checkbox"  name="cond"  value="HP">HP
+				<p><input v-model="cond" type="checkbox"  name="cond" value="M">M</p>
+				<p><input v-model="cond" type="checkbox"  name="cond" value="NM">NM</p>
+				<p><input v-model="cond" type="checkbox"  name="cond" value="SP">SP</p>
+				<p><input v-model="cond" type="checkbox"  name="cond"  value="HP">HP</p>
 			</form>
       </div>
       <div class="filter">
       <p>Фойла</p>
       <form>
-        <input type="radio" value="F" name="foil" v-model="foil">Только фоил
-        <input type="radio" value="N" name="foil" v-model="foil">Только не фоил
-        <input type="radio" value="D" name="foil" v-model="foil">Без разницы
+        <p><input type="radio" value="F" name="foil" v-model="foil">Только фоил</p>
+        <p><input type="radio" value="N" name="foil" v-model="foil">Только не фоил</p>
+        <p><input type="radio" value="D" name="foil" v-model="foil">Без разницы</p>
       </form>
       </div>
       <div class="filter">
         <p>Сортировка</p>
       <form>
-        <input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)
-        <input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)
-        <input type="radio" value="alph" name="sort" v-model="sort">по алфавиту
-        <input type="radio" value="def" name="sort" v-model="sort">сбросить
+        <p><input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)</p>
+        <p><input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)</p>
+        <p><input type="radio" value="alph" name="sort" v-model="sort">по алфавиту</p>
+        <p><input type="radio" value="def" name="sort" v-model="sort">сбросить</p>
       </form>
     </div>
 		</div>
@@ -47,7 +47,7 @@
           {%csrf_token%}
           <td><input type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" /></td>
           <td></td>
-          <td><input type="number" v-model="new_card['my_price']" name="my_price" value="0" step="any" required id="id_my_price" /></td>
+          <td><input type="number" v-model="new_card['my_price']" name="my_price" value="0" step="any" id="id_my_price" /></td>
           <td>
               <select v-model="new_card['condition']" name="condition" id="id_condition">
                 <option value="M">M</option>
@@ -99,7 +99,7 @@ let app = new Vue({
 
 
       change_my_price:function(id, value){
-       
+
         let url = "{%url 'plist:change_my_price' %}";
         fetch(url, {
           method: "POST",
@@ -115,7 +115,7 @@ let app = new Vue({
             if(this.cards[i].id==id){
             this.cards[i]["my_price"]=value;
             this.cards[i].edit_mode=false;}
-          } 
+          }
         }).catch((error)=>{
           console.log(error);
         })
@@ -161,7 +161,7 @@ let app = new Vue({
             if(this.cards[i].id!=id){
             new_cards.push(this.cards[i]);}
           }
-          this.cards = new_cards; 
+          this.cards = new_cards;
       }).catch((error)=>{
           console.log(error);
         })
@@ -184,7 +184,7 @@ let app = new Vue({
     }
   }
   })
-	app.loadCards()	
-	
+	app.loadCards()
+
 </script>
 {%endblock%}

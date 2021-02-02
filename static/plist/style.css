@@ -2,22 +2,15 @@
 	box-sizing: border-box;
 }
 .navigator {
-	height: 30px;
 	display: flex;
+  flex-direction: row;
+	margin-bottom: 10px;
 	justify-content: space-around;
 }
 .navigator a{
 	display: block;
 	text-decoration:none;
 	color: black;
-}
-.pannel{
-	padding: 5px;
-	border-width: 2px;
-	border-color: black;
-	border-style: solid;
-	width: 100%;
-	text-align: center;
 }
 .filters{
 	display: flex;
@@ -36,6 +29,25 @@
 	margin: 30px;
 	text-align: center;
 }
+.filter form{
+	display: flex;
+	flex-wrap: wrap;
+}
+@media (max-width: 800px) {
+  .navigator, .filters {
+    flex-direction: column;
+  }
+
+}
+.pannel{
+	padding: 5px;
+	border-width: 2px;
+	border-color: black;
+	border-style: solid;
+	width: 100%;
+	text-align: center;
+}
+
 .list{
 	margin: 5%;
 	border-width: 2px;
