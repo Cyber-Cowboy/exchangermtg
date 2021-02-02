@@ -1,6 +1,7 @@
 {%extends "base.html"%}
 {% block title %}{{card_list.name}}{% endblock %}
 {%block content%}
+
 	<div id="app">
 		<div class="filters">
       <div class="filter">
@@ -30,20 +31,34 @@
       </form>
     </div>
 		</div>
+		Обменник {{card_list.name}} от {{card_list.user.username}}
 		<table class="list">
 			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
 			<tr v-for="card in sorted_cards" v-if="filt(card)">
         <td>[[card.name]]</td>
         <td>[[card.price]]$</td>
-        <td v-if="!card.edit_mode">[[card.my_price]]$</td>
-        <td v-if="card.edit_mode">
-            <input type="text" v-on:keyup.enter="change_my_price(card.id,$event.target.value)" :placeholder="card.my_price"></td>
-        <td>[[card.condition]]</td>
-        <td><a href="#" v-on:click="card.edit_mode=true">edit</a></td>
+        <td v-if="!card.editPriceMode">[[card.my_price]]$
+					<h6 v-if="owner" class="edit_icon" v-on:click="toggleEditPrice(card)">&#128394</h6></td>
+        <td v-if="card.editPriceMode">
+            <input type="text" v-model="card.my_price" v-on:keyup.enter="toggleEditPrice(card)">
+						<h6 class="edit_icon" v-on:click="toggleEditPrice(card)">&#128394</h6>
+				</td>
+        <td v-if="!card.editConditionMode">[[card.condition]]
+						<h6 v-if="owner" class="edit_icon" v-on:click="toggleEditCondition(card)">&#128394</h6>
+				</td>
+				<td v-if="card.editConditionMode">
+						<select v-model="card['condition']" name="condition" id="id_condition" v-on:keyup.enter="toggleEditCondition(card)">
+							<option value="M" > M </option>
+							<option value="NM">NM</option>
+							<option value="SP">SP</option>
+							<option value="HP">HP</option>
+						</select>
+						<h6 class="edit_icon" v-on:click="toggleEditCondition(card)">&#128394</h6>
+				</td>
         <td><a href="#" v-on:click="delete_el(card.id)">X</a></td>
       </tr>
-      <tr>
-        <form method="POST">
+      <tr v-if="owner">
+        <form method="POST" >
           {%csrf_token%}
           <td><input type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" /></td>
           <td></td>
@@ -68,6 +83,7 @@ let app = new Vue({
   el: '#app',
   delimiters: ['[[', ']]'],
   data: {
+		owner:{{card_list.user.id}}=={{request.user.id}},
     cards:[],
     cond:[],
     sort:"def",
@@ -82,7 +98,8 @@ let app = new Vue({
   		xhttp.onreadystatechange = function(){
   			if(this.readyState == 4 && this.status==200){
   			for(i of JSON.parse(this.responseText)){
-          i["edit_mode"]=false;
+          i["editPriceMode"]=false;
+					i["editConditionMode"]=false;
   				app.cards.push(i);
   			}}
   		}
@@ -98,9 +115,9 @@ let app = new Vue({
       },
 
 
-      change_my_price:function(id, value){
+      change_card:function(card){
 
-        let url = "{%url 'plist:change_my_price' %}";
+        let url = "{%url 'plist:change_card' %}";
         fetch(url, {
           method: "POST",
           headers: {
@@ -108,19 +125,29 @@ let app = new Vue({
             "X-CSRFToken":"{{csrf_token}}"
           },
           credentials:"same-origin",
-          body: JSON.stringify({"card_id":id, "my_price":value})
+          body: JSON.stringify(card)
         }).then((response)=>{
           console.log(response);
-          for (var i = 0; i < this.cards.length; i++) {
-            if(this.cards[i].id==id){
-            this.cards[i]["my_price"]=value;
-            this.cards[i].edit_mode=false;}
-          }
         }).catch((error)=>{
           console.log(error);
         })
       },
-
+			toggleEditPrice:function(card){
+				if(card["editPriceMode"]===true){
+					this.change_card(card)
+					card["editPriceMode"]=false;
+				}else{
+					card["editPriceMode"]=true;
+				}
+			},
+			toggleEditCondition:function(card){
+				if(card["editConditionMode"]===true){
+					this.change_card(card)
+					card["editConditionMode"]=false;
+				}else{
+					card["editConditionMode"]=true;
+				}
+			},
 
       submit_new_card:function(){
         let url = "{%url 'plist:add_new_card' %}";
