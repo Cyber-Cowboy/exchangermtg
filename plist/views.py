@@ -15,46 +15,9 @@ def index(request):
 		"plist/index.html",{"cardlists":cardlist})
 
 def card_list(request, pk):
-	errors = []
 	card_list = get_object_or_404(CardList,pk=pk)
-	form = CardForm()
-	if request.method == "POST":
-		form = CardForm(request.POST)
-		response = requests.get("https://api.scryfall.com/cards/named?exact=%s"%request.POST["name"])
-		if json.loads(response.content)["object"]=="error":
-			errors.append("This card does not exist!")
-			return render(request, "plist/cardlist.html", {"card_list":cardlist,
-														"form":form,
-														"errors":errors})
-		if form.is_valid():
-			form.clean()
-			cd = form.cleaned_data
-			card = Card(name=cd["name"], 
-						my_price=cd["my_price"], 
-						condition=cd["condition"],
-						card_list=card_list,
-						foil=False,
-						alt_art=False,
-						mset="IXL")
-			card.save()
-	form = CardForm()
-	return render(request, 
-		"plist/cardlist.html", {"card_list":card_list, 
-								"form":form,
-								"errors":errors})
-
-def get_cards(request, pk):
-	card_list = CardList.objects.get(pk=pk)
-	cards = [{
-	"name":card.name,
-	"my_price":card.my_price,
-	"condition":card.condition,
-	"display":True,
-	"foil":card.foil,
-	"price":card.get_market_price(),
-	"id":card.id}
-	for card in Card.objects.filter(card_list=card_list)]
-	return HttpResponse(json.dumps(cards))
+	return render(request,
+		"plist/cardlist.html", {"card_list":card_list})
 
 @login_required(redirect_field_name='my_redirect_field')
 def create_card_list(request):

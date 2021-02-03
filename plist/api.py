@@ -1,9 +1,22 @@
 import json
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Card, CardList
 from .forms import CardForm
+
+def get_cards(request, pk):
+	card_list = CardList.objects.get(pk=pk)
+	cards = [{
+		"name":card.name,
+		"my_price":card.my_price,
+		"condition":card.condition,
+		"display":True,
+		"foil":card.foil,
+		"price":card.get_market_price(),
+		"id":card.id} for card in Card.objects.filter(card_list=card_list)]
+
+	return HttpResponse(json.dumps(cards))
 
 @login_required
 def delete_card(request):
