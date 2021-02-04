@@ -29,7 +29,7 @@ class Card(models.Model):
 
 	def __str__(self):
 		return self.name
-	
+
 	def get_market_price(self):
 		response = requests.get("https://api.scryfall.com/cards/named?exact=%s"%self.name)
 		try:

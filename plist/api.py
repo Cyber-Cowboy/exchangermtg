@@ -6,17 +6,22 @@ from .models import Card, CardList
 from .forms import CardForm
 
 def get_cards(request, pk):
-	card_list = CardList.objects.get(pk=pk)
+	card_list = get_object_or_404(CardList, pk=pk)
 	cards = [{
 		"name":card.name,
 		"my_price":card.my_price,
 		"condition":card.condition,
 		"display":True,
 		"foil":card.foil,
-		"price":card.get_market_price(),
+		"price":-1,
 		"id":card.id} for card in Card.objects.filter(card_list=card_list)]
 
-	return HttpResponse(json.dumps(cards))
+	return JsonResponse(cards, safe=False)
+
+def get_market_price(request):
+	card_id = json.loads(request.body)["id"]
+	card = get_object_or_404(Card, pk=card_id)
+	return JsonResponse({"price":card.get_market_price()})
 
 @login_required
 def delete_card(request):

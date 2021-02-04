@@ -36,7 +36,8 @@
 			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
 			<tr v-for="card in sorted_cards" v-if="filt(card)">
         <td>[[card.name]]</td>
-        <td>[[card.price]]$</td>
+        <td v-if="card.price>=0">[[card.price]]$</td>
+				<td v-if="card.price<0" class="loader"></td>
         <td v-if="!card.editPriceMode">[[card.my_price]]$
 					<h6 v-if="owner" class="edit_icon" v-on:click="toggleEditPrice(card)">&#128394</h6></td>
         <td v-if="card.editPriceMode">
@@ -93,23 +94,55 @@ let app = new Vue({
   methods:{
 
 
-  	loadCards:function(){
-
-  		let xhttp = new XMLHttpRequest();
-  		xhttp.onreadystatechange = function(){
-  			if(this.readyState == 4 && this.status==200){
-  			for(i of JSON.parse(this.responseText)){
-					if(app.cards.map((e)=>e.id).indexOf(i.id) == -1){
-          i["editPriceMode"]=false;
-					i["editConditionMode"]=false;
-  				app.cards.push(i);}
-  			}}
-  		}
-  		xhttp.open("GET", `${document.location.pathname.split("/")[2]}/cards`, true);
-  		xhttp.send();},
 
 
-
+			loadCards:function(){
+				let url = "{%url 'plist:get_cards' card_list.id %}";
+				fetch(url, {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						"X-CSRFToken":"{{csrf_token}}"
+						},
+					credentials:"same-origin",
+					body: JSON.stringify()
+				}).then((response)=>{
+					return response.json();
+				}).then((data)=>{
+					for(i of data){
+						if(app.cards.map((e)=>e.id).indexOf(i.id) == -1){
+						i["editPriceMode"]=false;
+						i["editConditionMode"]=false;
+						app.cards.push(i);}
+					}
+					this.loadPrices();
+				}).catch((error)=>{
+					console.log(error);
+				})
+			},
+			loadPrice:function(card){
+				let url = "{%url 'plist:get_market_price' %}";
+				fetch(url, {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						"X-CSRFToken":"{{csrf_token}}"
+						},
+					credentials:"same-origin",
+					body: JSON.stringify(card)
+				}).then((response)=>{
+					return response.json();
+				}).then((data=>{
+					card.price=data["price"];
+				})).catch((error)=>{
+					console.log(error);
+				})
+			},
+			loadPrices:function() {
+				for (var i=0; i<this.cards.length; i++) {
+					this.loadPrice(this.cards[i]);
+				}
+			},
       filt:function(card){
         condition = app.cond.length==0|app.cond.findIndex((i)=>i==card.condition)!=-1;
         foil = card.foil&app.foil=="F"|(!card.foil)&app.foil=="N"|app.foil=="D";
@@ -209,11 +242,11 @@ let app = new Vue({
       }else if(this.sort=="alph"){
         sorted.sort(function(a,b){if(b.name>a.name){return -1}else{return +1}})
       }
-      return sorted
+      return sorted;
     }
   }
   })
 	app.loadCards()
-
+	app.loadPrices()
 </script>
 {%endblock%}
