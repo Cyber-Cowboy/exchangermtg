@@ -1,6 +1,7 @@
 import json
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import CardList, Card
@@ -13,6 +14,11 @@ def index(request):
 	cardlist = CardList.objects.all()
 	return render(request,
 		"plist/index.html",{"cardlists":cardlist})
+
+def card_search(request):
+	query = request.GET.get("query", "")
+	cardlists = CardList.objects.filter(Q(cards__name__icontains=query))
+	return render(request, "plist/search.html",{"cardlists":cardlists})
 
 def card_list(request, pk):
 	card_list = get_object_or_404(CardList,pk=pk)

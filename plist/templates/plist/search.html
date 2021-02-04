@@ -1,0 +1,12 @@
+{%extends "base.html"%}
+{%block title%}Search{%endblock%}
+{%block content%}
+<form class="" action="./search" method="get" id="search">
+  <input class="field" type="text" name="query" placeholder="Введите название карты">
+  <input class="submit" type="submit" name="" value="поиск">
+</form>
+{%for cardlist in cardlists%}
+<div><a href="{%url 'plist:card_list' cardlist.id %}">{{cardlist.name}} by {{cardlist.user.username}}</a></div>
+{%endfor%}
+
+{%endblock%}

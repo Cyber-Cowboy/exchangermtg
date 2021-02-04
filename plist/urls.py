@@ -3,6 +3,7 @@ from . import views, api
 
 app_name = "plist"
 urlpatterns = [
+	path("exchangers/search", views.card_search, name="card_search"),
 	path("exchanger/<int:pk>", views.card_list, name="card_list"),
 	path("exchanger/create", views.create_card_list, name="create_card_list"),
 	path("exchanger/create_card", views.create_card, name="create_card"),

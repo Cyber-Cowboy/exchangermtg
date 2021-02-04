@@ -21,7 +21,7 @@ class Card(models.Model):
 	foil = models.BooleanField(default=False)
 	alt_art = models.BooleanField(default=False)
 	my_price = models.FloatField(default=0)
-	card_list = models.ForeignKey(CardList, on_delete=models.CASCADE)
+	card_list = models.ForeignKey(CardList, on_delete=models.CASCADE, related_name="cards")
 	condition = models.CharField(max_length=2, choices=[("M","M"),
 												("NM","NM"),
 												("SP","SP"),

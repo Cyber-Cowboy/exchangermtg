@@ -86,3 +86,17 @@ td{
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+#search{
+	text-align: center;
+	margin-top: 5%;
+}
+#search .field{
+	width: 40%;
+}
+#search .submit{
+	width: 10%;
+	height: 20px;
+	border-radius: 0;
+	border-color: black;
+	background-color: white;
+}
