@@ -50,7 +50,6 @@ def change_card(request):
 @login_required
 def add_new_card(request):
 	card_data = json.loads(request.body)
-	print(card_data)
 	card_list = get_object_or_404(CardList, pk=int(card_data['card_list']))
 	form = CardForm({"name":card_data["name"],
 					"my_price":card_data["my_price"],

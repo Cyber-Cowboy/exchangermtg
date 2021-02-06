@@ -100,3 +100,16 @@ td{
 	border-color: black;
 	background-color: white;
 }
+.notification{
+	margin-left: 90%;
+	border-radius: 2px;
+	border-width: 1px;
+	width: 300px;
+	height: 30px;
+}
+.success{
+	background-color: green;
+}
+.error{
+	background-color: red;
+}
