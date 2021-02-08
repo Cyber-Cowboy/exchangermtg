@@ -1,10 +1,65 @@
 {%extends "base.html"%}
 {% block title %}{{card_list.name}}{% endblock %}
 {%block content%}
-
 	<div id="app">
-		<div class="filters">
-      <div class="filter">
+		<div class="columns">
+		<div class="box column is-four-fifths">
+			<h2 class="title is-3">{{card_list.name}} от <a href="{% url 'exchprofile:user_profile' card_list.user.username%}">{{card_list.user.username}}</a></h2>
+			<table class="list">
+
+				<tr><th>Карта</th><th>Средняя цена</th><th>Цена владельца</th><th>Состояние</th></tr>
+				<tr v-for="card in sorted_cards" v-if="filt(card)">
+        	<td>[[card.name]]</td>
+        	<td v-if="card.price>=0">[[card.price]]$</td>
+					<td v-if="card.price<0" class="mdi mdi-loading mdi-spin"></td>
+        	<td v-if="!card.editPriceMode">[[card.my_price]]$
+					<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span></td>
+        	<td v-if="card.editPriceMode">
+            <input class="edit-card-input input is-small" type="number" v-model="card.my_price" v-on:keyup.enter="toggleEditPrice(card)">
+						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span>
+					</td>
+
+        	<td v-if="!card.editConditionMode">[[card.condition]]
+						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
+					</td>
+					<td v-if="card.editConditionMode">
+						<div class="select is-small">
+						<select v-model="card['condition']" class="edit-card-select" name="condition" id="id_condition" v-on:keyup.enter="toggleEditCondition(card)">
+							<option value="M" > M </option>
+							<option value="NM">NM</option>
+							<option value="SP">SP</option>
+							<option value="HP">HP</option>
+						</select>
+						</div>
+						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
+					</td>
+        	<td><button class="delete" v-on:click="delete_el(card.id)" v-if="owner"></button></td>
+      	</tr>
+      	<tr v-if="owner">
+        	<form method="POST" >
+          	{%csrf_token%}
+          	<td><input class="add-card input is-small" type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" /></td>
+          	<td></td>
+          	<td><input type="number"  class="add-card input is-small" v-model="new_card['my_price']" name="my_price" value="0" step="any" id="id_my_price" /></td>
+          	<td>
+							<div class="select is-small">
+              	<select  v-model="new_card['condition']" class="add-card-select" name="condition" id="id_condition">
+                	<option value="M">M</option>
+                	<option value="NM" selected>NM</option>
+                	<option value="SP">SP</option>
+                	<option value="HP">HP</option>
+              	</select>
+							</div>
+						</td>
+          	<td>
+           		<button class="button is-primary" v-on:click="submit_new_card">Добавить</button>
+          	</td>
+      	</form>
+    	</tr>
+			</table>
+		</div>
+		<div class="filters box column ">
+      <div class="filter box">
         <p>Состояние</p>
 			<form >
 				<p><input v-model="cond" type="checkbox"  name="cond" value="M">M</p>
@@ -13,7 +68,7 @@
 				<p><input v-model="cond" type="checkbox"  name="cond"  value="HP">HP</p>
 			</form>
       </div>
-      <div class="filter">
+      <div class="filter box">
       <p>Фойла</p>
       <form>
         <p><input type="radio" value="F" name="foil" v-model="foil">Только фоил</p>
@@ -21,7 +76,7 @@
         <p><input type="radio" value="D" name="foil" v-model="foil">Без разницы</p>
       </form>
       </div>
-      <div class="filter">
+      <div class="filter box">
         <p>Сортировка</p>
       <form>
         <p><input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)</p>
@@ -31,58 +86,12 @@
       </form>
     </div>
 		</div>
-		Обменник {{card_list.name}} от {{card_list.user.username}}
-		<table class="list">
-			<tr><th>Card Name</th><th>Price</th><th>Owner's price</th><th>Condition</th></tr>
-			<tr v-for="card in sorted_cards" v-if="filt(card)">
-        <td>[[card.name]]</td>
-        <td v-if="card.price>=0">[[card.price]]$</td>
-				<td v-if="card.price<0" class="loader"></td>
-        <td v-if="!card.editPriceMode">[[card.my_price]]$
-					<h6 v-if="owner" class="edit_icon" v-on:click="toggleEditPrice(card)">&#128394</h6></td>
-        <td v-if="card.editPriceMode">
-            <input type="text" v-model="card.my_price" v-on:keyup.enter="toggleEditPrice(card)">
-						<h6 class="edit_icon" v-on:click="toggleEditPrice(card)">&#128394</h6>
-				</td>
-        <td v-if="!card.editConditionMode">[[card.condition]]
-						<h6 v-if="owner" class="edit_icon" v-on:click="toggleEditCondition(card)">&#128394</h6>
-				</td>
-				<td v-if="card.editConditionMode">
-						<select v-model="card['condition']" name="condition" id="id_condition" v-on:keyup.enter="toggleEditCondition(card)">
-							<option value="M" > M </option>
-							<option value="NM">NM</option>
-							<option value="SP">SP</option>
-							<option value="HP">HP</option>
-						</select>
-						<h6 class="edit_icon" v-on:click="toggleEditCondition(card)">&#128394</h6>
-				</td>
-        <td><a class="edit_icon" v-on:click="delete_el(card.id)">X</a></td>
-      </tr>
-      <tr v-if="owner">
-        <form method="POST" >
-          {%csrf_token%}
-          <td><input type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" /></td>
-          <td></td>
-          <td><input type="number" v-model="new_card['my_price']" name="my_price" value="0" step="any" id="id_my_price" /></td>
-          <td>
-              <select v-model="new_card['condition']" name="condition" id="id_condition">
-                <option value="M">M</option>
-                <option value="NM" selected>NM</option>
-                <option value="SP">SP</option>
-                <option value="HP">HP</option>
-              </select>
-          </td>
-          <td>
-           <input type="submit" v-on:click="submit_new_card" value="Добавить">
-          </td>
-      </form>
-    </tr>
-		</table>
-		<div v-for="message in success_messages" class="notification success">
-			[[message]]
-		</div>
-		<div v-for="message in error_messages" class="notification error">
-			[[message]]
+		<div>
+		<div class="notifications">
+			<div v-for="message in messages" v-bind:class="message.class" class="notification">
+				<button class="delete"  v-on:click="messages.splice(messages.map((e)=>e.id).indexOf(message.id), 1)"></button>
+				[[message.text]]
+			</div>
 		</div>
 	</div>
 <script>
@@ -96,15 +105,11 @@ let app = new Vue({
     sort:"def",
     foil:"D",
     new_card:{},
-		success_messages:[],
-		error_messages:[],
+		messages:[],
+		message_id:0,
   		},
   methods:{
-
-
-
-
-			loadCards:function(){
+		loadCards:function(){
 				let url = "{%url 'plist:get_cards' card_list.id %}";
 				fetch(url, {
 					method: "POST",
@@ -210,8 +215,8 @@ let app = new Vue({
 					this.new_card = {};
 					this.loadCards();
 					console.log(data);
-					if(data["success"]==true){this.success_messages.push("Карта добавлена")}
-					else{this.error_messages.push("Карта не найдена")};
+					if(data["success"]==true){this.messages.unshift({"text":"Карта добавлена","class":"is-success", "id":this.message_id++})}
+					else{this.messages.unshift({"text":"Карта не найдена","class":"is-danger", "id":this.message_id++})};
 				}).catch((error)=>{
           console.log(error);
         })

@@ -1,90 +1,56 @@
-*{
-	box-sizing: border-box;
-}
-.navigator {
-	display: flex;
-  flex-direction: row;
-	margin-bottom: 10px;
-	justify-content: space-around;
-}
-.navigator a{
-	display: block;
-	text-decoration:none;
-	color: black;
-}
+
 .filters{
 	display: flex;
 	justify-content: space-around;
-	border-width: 2px;
-	border-color: black;
-	border-style: solid;
-	margin: 30px;
+	flex-wrap: wrap;
 	text-align: center;
 
 }
 .filter{
-	border-width: 2px;
-	border-color: black;
-	border-style: solid;
 	margin: 30px;
 	text-align: center;
 }
 .filter form{
 	display: flex;
 	flex-wrap: wrap;
-}
-@media (max-width: 800px) {
-  .navigator, .filters {
-    flex-direction: column;
-  }
 
 }
-.pannel{
-	padding: 5px;
-	border-width: 2px;
-	border-color: black;
-	border-style: solid;
-	width: 100%;
-	text-align: center;
+
+
+.add-card{
+	width:200px;
 }
+.add-card-select{
+	width:100px;
+}
+.edit-card-input{
+	width: 180px;
+}
+.edit-card-select{
+	width: 80px;
+}
+
 
 .list{
-	margin: 5%;
-	border-width: 2px;
-	border-color: black;
-	border-style: solid;
-	width: 90%;
 	text-align: center;
+	width: 100%;
 }
 .list a{
 	text-align: center;
 }
-.edit_icon{
-	cursor:pointer;
-	display: inline;
-}
+
 td{
 	height: 40px;
+	width: 100px;
 }
-.loader {
-  border: 5px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 5px solid #3498db;
-  width: 5px;
-  height: 10px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
-  animation: spin 2s linear infinite;
+.notifications{
+	position: absolute;
+	bottom: 10px;
+	right:10px;
+	width:200px;
 }
-
-/* Safari */
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.notification{
+	margin-bottom: 0;
 }
 #search{
 	text-align: center;
@@ -99,17 +65,4 @@ td{
 	border-radius: 0;
 	border-color: black;
 	background-color: white;
-}
-.notification{
-	margin-left: 90%;
-	border-radius: 2px;
-	border-width: 1px;
-	width: 300px;
-	height: 30px;
-}
-.success{
-	background-color: green;
-}
-.error{
-	background-color: red;
 }
