@@ -1,12 +1,86 @@
 {%extends "base.html"%}
 {%block title%}Search{%endblock%}
 {%block content%}
-<form class="" action="./search" method="get" id="search">
-  <input class="field" type="text" name="query" placeholder="Введите название карты">
-  <input class="submit" type="submit" name="" value="поиск">
+<div id="app">
+<div class="level">
+<form class="level-item has-text-centered"  action="./search" method="get" id="search">
+  <div class="field  has-addons">
+    <div class="control is-expanded">
+      <input class="input  is-medium" type="text" v-model="query" name="query" placeholder="Введите название карты">
+    </div>
+    <div class="control">
+      <input class="button is-medium is-info" type="submit" value="поиск">
+    </div>
+  </div>
 </form>
-{%for cardlist in cardlists%}
-<div><a href="{%url 'plist:card_list' cardlist.id %}">{{cardlist.name}} by {{cardlist.user.username}}</a></div>
-{%endfor%}
+</div>
+<div class="filters box column ">
+  <div class="filter box">
+    <p>Состояние</p>
+  <form >
+    <p><input v-model="cond" type="checkbox"  name="cond" value="M">M</p>
+    <p><input v-model="cond" type="checkbox"  name="cond" value="NM">NM</p>
+    <p><input v-model="cond" type="checkbox"  name="cond" value="SP">SP</p>
+    <p><input v-model="cond" type="checkbox"  name="cond"  value="HP">HP</p>
+  </form>
+  </div>
+  <div class="filter box">
+  <p>Фойла</p>
+  <form>
+    <p><input type="radio" value="F" name="foil" v-model="foil">Только фоил</p>
+    <p><input type="radio" value="N" name="foil" v-model="foil">Только не фоил</p>
+    <p><input type="radio" value="D" name="foil" v-model="foil">Без разницы</p>
+  </form>
+  </div>
+  <div class="filter box">
+    <p>Сортировка</p>
+  <form>
+    <p><input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)</p>
+    <p><input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)</p>
+    <p><input type="radio" value="def" name="sort" v-model="sort">сбросить</p>
+  </form>
+</div>
+</div>
+<div class="m-5" v-for="card in sorted_cards" v-if="filt(card)"><a v-bind:href="card.cardlist_url">[[card.cardname]] найден в обменнике [[card.cardlist_user]]. Стоимость - [[card.price]] </a></div>
 
+
+</div>
+<script>
+let app = new Vue({
+  el: '#app',
+  delimiters: ['[[', ']]'],
+  data: {
+    query:"",
+    cond:[],
+    foil:"D",
+    sort:"",
+    cards:[{%for card in cards%}{ "cardname":"{{card.name}}",
+                                  "cardlist_url":"{%url 'plist:card_list' card.card_list.id%}",
+                                  "cardlist_user":"{{card.card_list.user.username}}",
+                                  "price":+"{{card.my_price}}".replace(',','.'),
+                                  "condition":"{{card.condition}}",
+                                  "foil":{{card.foil|lower}},},{%endfor%}]
+  },
+  methods:{
+    filt:function(card){
+      condition = this.cond.length==0|this.cond.findIndex((i)=>i==card.condition)!=-1;
+      foil = card.foil&this.foil=="F"|(!card.foil)&this.foil=="N"|this.foil=="D";
+      return condition&foil;
+    },
+
+  },
+  computed:{
+    sorted_cards:function(){
+      sorted = this.cards.slice(0)
+      if(this.sort=="price(inc)"){
+        sorted.sort(function(a,b){return a.price-b.price})
+      }else if(this.sort=="price(dec)"){
+        sorted.sort(function(a,b){return b.price-a.price})
+      }
+      return sorted;
+    }
+  }
+
+})
+</script>
 {%endblock%}

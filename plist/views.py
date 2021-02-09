@@ -16,9 +16,11 @@ def index(request):
 		"plist/index.html",{"cardlists":cardlist})
 
 def card_search(request):
+	cards = []
 	query = request.GET.get("query", "")
-	cardlists = CardList.objects.filter(Q(cards__name__icontains=query))
-	return render(request, "plist/search.html",{"cardlists":cardlists})
+	if query:
+		cards = Card.objects.filter(Q(name__icontains=query))
+	return render(request, "plist/search.html", {"cards":cards})
 
 def card_list(request, pk):
 	card_list = get_object_or_404(CardList,pk=pk)
