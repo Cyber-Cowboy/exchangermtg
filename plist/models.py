@@ -40,3 +40,8 @@ class Card(models.Model):
 class Mset(models.Model):
 	full_name = models.CharField(max_length=50)
 	set_code = models.CharField(max_length=5)
+	release_date = models.DateTimeField(blank=True, null=True)
+	class Meta:
+		ordering = ["-release_date"]
+	def __str__(self):
+		return self.full_name
