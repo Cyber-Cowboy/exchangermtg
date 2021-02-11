@@ -1,99 +1,134 @@
 {%extends "base.html"%}
 {% block title %}{{card_list.name}}{% endblock %}
 {%block content%}
-	<div id="app">
-		<div class="columns">
-		<div class="box column is-four-fifths">
-			<h2 class="title is-3">{{card_list.name}} от <a href="{% url 'exchprofile:user_profile' card_list.user.username%}">{{card_list.user.username}}</a></h2>
-			<table class="list">
+<div id="app">
+  <div class="columns">
+    <div class="box column is-four-fifths">
+      <h2 class="title is-3">{{card_list.name}} от <a href="{% url 'exchprofile:user_profile' card_list.user.username%}">{{card_list.user.username}}</a></h2>
+      <table class="list">
 
-				<tr><th>Карта</th><th>Средняя цена</th><th>Цена владельца</th><th>Состояние</th></tr>
-				<tr v-for="card in sorted_cards" v-if="filt(card)">
-        	<td>[[card.name]]</td>
-        	<td v-if="card.price>=0">[[card.price]]$</td>
-					<td v-if="card.price<0" class="mdi mdi-loading mdi-spin"></td>
-        	<td v-if="!card.editPriceMode">[[card.my_price]]$
-					<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span></td>
-        	<td v-if="card.editPriceMode">
+        <tr>
+          <th>Карта</th>
+          <th>Средняя цена</th>
+          <th>Цена владельца</th>
+          <th>Состояние</th>
+          <th>Сет</th>
+        </tr>
+        <tr v-for="card in sorted_cards" v-if="filt(card)">
+          <td>[[card.name]]</td>
+          <td v-if="card.price>=0">[[card.price]]$</td>
+          <td v-if="card.price<0" class="mdi mdi-loading mdi-spin"></td>
+          <td v-if="!card.editPriceMode">[[card.my_price]]$
+            <span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span></td>
+          <td v-if="card.editPriceMode">
             <input class="edit-card-input input is-small" type="number" v-model="card.my_price" v-on:keyup.enter="toggleEditPrice(card)">
-						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span>
-					</td>
+            <span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditPrice(card)"></span>
+          </td>
 
-        	<td v-if="!card.editConditionMode">[[card.condition]]
-						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
-					</td>
-					<td v-if="card.editConditionMode">
-						<div class="select is-small">
-						<select v-model="card['condition']" class="edit-card-select" name="condition" id="id_condition" v-on:keyup.enter="toggleEditCondition(card)">
-							<option value="M" > M </option>
-							<option value="NM">NM</option>
-							<option value="SP">SP</option>
-							<option value="HP">HP</option>
-						</select>
-						</div>
-						<span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
-					</td>
-        	<td><button class="delete" v-on:click="delete_el(card.id)" v-if="owner"></button></td>
-      	</tr>
-      	<tr v-if="owner">
-        	<form method="POST" >
-          	{%csrf_token%}
-          	<td><input class="add-card input is-small" type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" /></td>
-          	<td></td>
-          	<td><input type="number"  class="add-card input is-small" v-model="new_card['my_price']" name="my_price" value="0" step="any" id="id_my_price" /></td>
-          	<td>
-							<div class="select is-small">
-              	<select  v-model="new_card['condition']" class="add-card-select" name="condition" id="id_condition">
-                	<option value="M">M</option>
-                	<option value="NM" selected>NM</option>
-                	<option value="SP">SP</option>
-                	<option value="HP">HP</option>
-              	</select>
-							</div>
-						</td>
-          	<td>
-           		<button class="button is-primary" v-on:click="submit_new_card">Добавить</button>
-          	</td>
-      	</form>
-    	</tr>
-			</table>
-		</div>
-		<div class="filters box column ">
+          <td v-if="!card.editConditionMode">[[card.condition]]
+            <span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
+          </td>
+          <td v-if="card.editConditionMode">
+            <div class="select is-small">
+              <select v-model="card['condition']" class="edit-card-select" name="condition" id="id_condition" v-on:keyup.enter="toggleEditCondition(card)">
+                <option value="M"> M </option>
+                <option value="NM">NM</option>
+                <option value="SP">SP</option>
+                <option value="HP">HP</option>
+              </select>
+            </div>
+            <span v-if="owner" class="mdi mdi-pencil-outline" v-on:click="toggleEditCondition(card)"></span>
+          </td>
+          <td>[[card.set]]</td>
+          <td>
+            <button class="delete" v-on:click="delete_el(card.id)" v-if="owner"></button>
+          </td>
+        </tr>
+        <tr v-if="owner">
+          <form method="POST">
+            {%csrf_token%}
+            <td>
+              <input class="add-card input is-small" type="text" v-model="new_card['name']" name="name" maxlength="100" required id="id_name" />
+            </td>
+            <td></td>
+            <td>
+              <input type="number" class="add-card input is-small" v-model="new_card['my_price']" name="my_price" value="0" step="any" id="id_my_price" />
+            </td>
+            <td>
+              <div class="select is-small">
+                <select v-model="new_card['condition']" class="add-card-select" name="condition" id="id_condition">
+                  <option value="M">M</option>
+                  <option value="NM" selected>NM</option>
+                  <option value="SP">SP</option>
+                  <option value="HP">HP</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="select is-small">
+                <select v-model="new_card['set']" class="add-card-select" name="cset" id="id_set">
+									{%for mset in sets%}
+									<option value="{{mset.set_code}}">{{mset.full_name}}</option>
+									{%endfor%}
+                </select>
+              </div>
+            </td>
+            <td>
+              <button class="button is-primary" v-on:click="submit_new_card">Добавить</button>
+            </td>
+          </form>
+        </tr>
+      </table>
+    </div>
+    <div class="filters box column ">
       <div class="filter box">
         <p>Состояние</p>
-			<form >
-				<p><input v-model="cond" type="checkbox"  name="cond" value="M">M</p>
-				<p><input v-model="cond" type="checkbox"  name="cond" value="NM">NM</p>
-				<p><input v-model="cond" type="checkbox"  name="cond" value="SP">SP</p>
-				<p><input v-model="cond" type="checkbox"  name="cond"  value="HP">HP</p>
-			</form>
+        <form>
+          <p>
+            <input v-model="cond" type="checkbox" name="cond" value="M">M</p>
+          <p>
+            <input v-model="cond" type="checkbox" name="cond" value="NM">NM</p>
+          <p>
+            <input v-model="cond" type="checkbox" name="cond" value="SP">SP</p>
+          <p>
+            <input v-model="cond" type="checkbox" name="cond" value="HP">HP</p>
+        </form>
       </div>
       <div class="filter box">
-      <p>Фойла</p>
-      <form>
-        <p><input type="radio" value="F" name="foil" v-model="foil">Только фоил</p>
-        <p><input type="radio" value="N" name="foil" v-model="foil">Только не фоил</p>
-        <p><input type="radio" value="D" name="foil" v-model="foil">Без разницы</p>
-      </form>
+        <p>Фойла</p>
+        <form>
+          <p>
+            <input type="radio" value="F" name="foil" v-model="foil">Только фоил</p>
+          <p>
+            <input type="radio" value="N" name="foil" v-model="foil">Только не фоил</p>
+          <p>
+            <input type="radio" value="D" name="foil" v-model="foil">Без разницы</p>
+        </form>
       </div>
       <div class="filter box">
         <p>Сортировка</p>
-      <form>
-        <p><input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)</p>
-        <p><input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)</p>
-        <p><input type="radio" value="alph" name="sort" v-model="sort">по алфавиту</p>
-        <p><input type="radio" value="def" name="sort" v-model="sort">сбросить</p>
-      </form>
+        <form>
+          <p>
+            <input type="radio" value="price(dec)" name="sort" v-model="sort">по цене(убыв)</p>
+          <p>
+            <input type="radio" value="price(inc)" name="sort" v-model="sort">по цене(возрас)</p>
+          <p>
+            <input type="radio" value="alph" name="sort" v-model="sort">по алфавиту</p>
+          <p>
+            <input type="radio" value="def" name="sort" v-model="sort">сбросить</p>
+        </form>
+      </div>
     </div>
-		</div>
-		<div>
-		<div class="notifications">
-			<div v-for="message in messages" v-bind:class="message.class" class="notification">
-				<button class="delete"  v-on:click="messages.splice(messages.map((e)=>e.id).indexOf(message.id), 1)"></button>
-				[[message.text]]
-			</div>
-		</div>
-	</div>
+    <div>
+      <div class="notifications">
+        <div v-for="message in messages" v-bind:class="message.class" class="notification">
+          <button class="delete" v-on:click="messages.splice(messages.map((e)=>e.id).indexOf(message.id), 1)"></button>
+          [[message.text]]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 let app = new Vue({
   el: '#app',

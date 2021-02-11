@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import CardList, Card
+from .models import CardList, Card, Mset
 from .forms import CardForm
 
 import json
@@ -25,7 +25,8 @@ def card_search(request):
 def card_list(request, pk):
 	card_list = get_object_or_404(CardList,pk=pk)
 	return render(request,
-		"plist/cardlist.html", {"card_list":card_list})
+		"plist/cardlist.html", {"card_list":card_list,
+								"sets":Mset.objects.all()})
 
 @login_required(redirect_field_name='my_redirect_field')
 def create_card_list(request):

@@ -36,3 +36,7 @@ class Card(models.Model):
 			return json.loads(response.content)["prices"]["usd"]
 		except:
 			return -1
+
+class Mset(models.Model):
+	full_name = models.CharField(max_length=50)
+	set_code = models.CharField(max_length=5)

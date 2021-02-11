@@ -14,6 +14,7 @@ def get_cards(request, pk):
 		"display":True,
 		"foil":card.foil,
 		"price":-1,
+		"set":card.mset,
 		"id":card.id} for card in Card.objects.filter(card_list=card_list)]
 
 	return JsonResponse(cards, safe=False)
@@ -53,7 +54,8 @@ def add_new_card(request):
 	card_list = get_object_or_404(CardList, pk=int(card_data['card_list']))
 	form = CardForm({"name":card_data["name"],
 					"my_price":card_data["my_price"],
-					"condition":card_data["condition"]})
+					"condition":card_data["condition"],
+					"set":card_data["set"]})
 
 	if form.is_valid() and request.user==card_list.user:
 		form.clean()
@@ -64,7 +66,7 @@ def add_new_card(request):
 					card_list=card_list,
 					foil=False,
 					alt_art=False,
-					mset="IXL")
+					mset=cd["set"])
 		card.save()
 		return JsonResponse({"success":True})
 	else:

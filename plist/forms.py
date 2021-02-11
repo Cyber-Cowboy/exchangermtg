@@ -10,12 +10,15 @@ class CardForm(forms.Form):
 											("SP","SP"),
 											("HP","HP")])
 	my_price = forms.FloatField()
+	set = forms.CharField(max_length=20)
 
-	def clean_name(self):
-		raw_name = self.cleaned_data["name"]
-		raw_response = requests.get("https://api.scryfall.com/cards/named?exact="+raw_name)
+	def clean(self):
+		cleaned_data = super().clean()
+		raw_name = self.cleaned_data.get("name")
+		raw_set = self.cleaned_data.get("set")
+		raw_response = requests.get("https://api.scryfall.com/cards/named?exact="+raw_name+"&set="+raw_set)
 		response = json.loads(raw_response.content)
-		if "name" in response.keys():
-			return response["name"]
+		if not "name" in response.keys():
+			self.add_error("name", "not found in the set")
 		else:
-			raise ValidationError("Name not found")
+			self.cleaned_data["name"] = response["name"]
